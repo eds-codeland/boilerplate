@@ -32,11 +32,45 @@
   }
 }
 
-.columns .material-check > h4 {
-    text-transform: uppercase;
-    font-weight: 900;
-    font-size: 30px;
-    line-height: 30px;
-    letter-spacing: 0;
-    color: #000000;
+.columns.material-check {
+    font-family: "Figtree", sans-serif;
+
+    div {
+        align-items: unset;
+    }
+
+    ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+
+        li {
+            position: relative;
+            padding-left: 45px;
+            color: #000000;
+            line-height: 28px;
+            margin-bottom: 15px;
+        }
+
+        li::before {
+            content: "";
+            display: inline-block;
+            width: 30px;
+            height: 23px;
+            position: absolute;
+            top: 5px;
+            left: 0;
+            background: transparent url(../../icons/material-check.svg) no-repeat center center;
+        }
+    }
+
+    h4 {
+        text-transform: uppercase;
+        font-weight: 900;
+        font-size: 30px;
+        line-height: 30px;
+        letter-spacing: 0;
+        color: #000000;
+        font-family: "Figtree", sans-serif;
+    }
 }
