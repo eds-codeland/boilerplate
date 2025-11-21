@@ -14,49 +14,90 @@ export default function decorate(block) {
   const container = document.createElement('div');
   container.classList.add('gallery-carousel-container');
   
-  // Process each row as a gallery item
-  rows.forEach((row, idx) => {
+  let imageCount = 0;
+  
+  // Process each row as a gallery item (skip first row which is the block name)
+  rows.slice(1).forEach((row, idx) => {
     const cells = Array.from(row.querySelectorAll(':scope > div'));
+    console.log(`Row ${idx + 1} - Cells:`, cells.length);
     
     if (cells.length >= 1) {
-      const cell = cells[0];
-      const img = cell.querySelector('img');
-      const link = cell.querySelector('a');
+      let imageUrl = null;
+      let caption = '';
       
+      const firstCell = cells[0];
+      const secondCell = cells[1];
+      
+      // Check first cell for image
+      let img = firstCell.querySelector('img');
       if (img) {
+        imageUrl = img.src;
+        caption = img.alt || '';
+        console.log(`Row ${idx + 1} - Found image in first cell:`, imageUrl);
+      }
+      
+      // Check second cell for image (pasted images)
+      if (!imageUrl && secondCell) {
+        img = secondCell.querySelector('img');
+        if (img) {
+          imageUrl = img.src;
+          caption = img.alt || '';
+          console.log(`Row ${idx + 1} - Found image in second cell:`, imageUrl);
+        }
+      }
+      
+      // Check second cell for link (URL)
+      const link = secondCell?.querySelector('a');
+      if (link && !imageUrl) {
+        imageUrl = link.href;
+        caption = link.textContent || '';
+        console.log(`Row ${idx + 1} - Found link in second cell:`, imageUrl);
+      } else if (link && imageUrl) {
+        imageUrl = link.href;
+        console.log(`Row ${idx + 1} - Using link as full-size image:`, imageUrl);
+      }
+      
+      // Check for text content in second cell
+      if (!imageUrl && secondCell) {
+        const text = secondCell.textContent.trim();
+        if (text.startsWith('http')) {
+          imageUrl = text;
+          console.log(`Row ${idx + 1} - Found URL in text:`, imageUrl);
+        }
+      }
+      
+      if (imageUrl) {
+        imageCount++;
         const item = document.createElement('div');
         item.classList.add('gallery-carousel-item');
         
         // Create gallery link with lightbox
         const galleryLink = document.createElement('a');
-        galleryLink.href = link?.href || img.src;
+        galleryLink.href = imageUrl;
         galleryLink.classList.add('gallery-carousel-link');
         galleryLink.setAttribute('data-fancybox', 'gallery');
-        galleryLink.setAttribute('data-caption', img.alt || '');
+        // Don't show URL as caption - leave it empty
+        galleryLink.setAttribute('data-caption', '');
         
-        // Set background image
-        galleryLink.style.backgroundImage = `url('${img.src}')`;
-        galleryLink.style.backgroundSize = 'cover';
-        galleryLink.style.backgroundPosition = 'center';
-        galleryLink.style.backgroundRepeat = 'no-repeat';
+        // Create image
+        const imgElement = document.createElement('img');
+        imgElement.src = imageUrl;
+        imgElement.alt = '';
+        imgElement.classList.add('gallery-carousel-image');
         
-        // Create placeholder image
-        const placeholderImg = document.createElement('img');
-        placeholderImg.src = img.src;
-        placeholderImg.alt = img.alt || '';
-        placeholderImg.classList.add('gallery-carousel-placeholder');
-        
-        galleryLink.append(placeholderImg);
+        galleryLink.append(imgElement);
         item.append(galleryLink);
         container.append(item);
+        
+        console.log(`Image ${imageCount} added:`, imageUrl);
       }
     }
   });
   
-  wrapper.append(container);
+  console.log('Gallery carousel - Total images added:', imageCount);
   
   block.textContent = '';
-  block.append(wrapper);
+  block.append(container);
   
   // Load Fancybox if available
   if (window.Fancybox) {
