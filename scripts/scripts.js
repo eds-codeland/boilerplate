@@ -139,6 +139,61 @@ async function loadLazy(doc) {
 
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
   loadFonts();
+
+  // Load Fancybox for lightbox functionality
+  loadCSS('https://cdn.jsdelivr.net/npm/@fancyapps/ui@4.0/dist/fancybox.css');
+  
+  // Add custom Fancybox styling - keep default colors
+  const fancyboxStyle = document.createElement('style');
+  fancyboxStyle.textContent = `
+    /* Keep default Fancybox styling */
+    .fancybox__thumb.is-selected {
+      border-color: #00d4ff;
+    }
+  `;
+  document.head.append(fancyboxStyle);
+  
+  const fancyboxScript = document.createElement('script');
+  fancyboxScript.src = 'https://cdn.jsdelivr.net/npm/@fancyapps/ui@4.0/dist/fancybox.umd.js';
+  fancyboxScript.async = true;
+  fancyboxScript.onload = () => {
+    if (window.Fancybox) {
+      window.Fancybox.bind('[data-fancybox="gallery"]', {
+        // Enable all buttons
+        buttons: ['slideshow', 'fullscreen', 'thumbs', 'close'],
+        // Autoplay settings
+        autoplay: {
+          duration: 3000,
+          autostart: false
+        },
+        // Slideshow settings
+        slideshow: {
+          duration: 3000
+        },
+        // Zoom settings
+        zoom: true,
+        // Fullscreen settings
+        fullscreen: {
+          autoStart: false
+        },
+        // Thumbnails
+        thumbs: {
+          autoStart: true
+        },
+        // Keyboard navigation
+        keyboard: true,
+        // Animations
+        placeFocusBack: true,
+        trapFocus: true,
+        on: {
+          reveal: (fancybox, slide) => {
+            // Optional: add custom behavior
+          }
+        }
+      });
+    }
+  };
+  document.head.append(fancyboxScript);
 }
 
 /**

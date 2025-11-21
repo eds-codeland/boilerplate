@@ -3,3 +3,37 @@
 main .library-metadata {
     display: none;
 }
+
+/* Fancybox overrides: match Acerbis style (outline arrows, no solid blue fill) */
+.fancybox__container {
+  /* Use default accent color, but no solid background on buttons */
+  --fancybox-accent-color: rgba(34, 213, 233, 0.96);
+  --carousel-button-bg: transparent !important;
+  --carousel-button-color: #ffffff;
+  --carousel-button-border-radius: 50%;
+  --carousel-button-shadow: none;
+}
+
+/* Navigation arrows: outlined circle with cyan border, no fill */
+.fancybox__nav .carousel__button {
+  background: transparent !important;
+  border: 2px solid var(--fancybox-accent-color) !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+}
+
+.fancybox__nav .carousel__button:hover {
+  opacity: 0.9;
+}
+
+/* Remove blue fill from SVG inside arrow buttons */
+.fancybox__nav .carousel__button svg {
+  stroke: #ffffff;
+  fill: none !important;
+}
+
+/* Toolbar buttons: keep minimal look */
+.fancybox__toolbar .carousel__button {
+  background: transparent !important;
+  box-shadow: none !important;
+}
