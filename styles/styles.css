@@ -45,6 +45,10 @@
   --nav-height: 64px;
   --breadcrumbs-height: 34px;
   --header-height: var(--nav-height);
+
+  /* sectors carousel */
+  --sectors-yellow: #FFFF00;
+  --sectors-nav-width: 400px;
 }
 
 /* fallback fonts */
