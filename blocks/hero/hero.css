@@ -2,29 +2,31 @@ div[class="hero-wrapper"] {
 	width: 100%;
 	max-width: 100% !important;
 	background-color: yellow;
-	/* margin-top: -70px !important; */
+	margin-top: -60px !important;
 	z-index: -1;
 }
 
-.hero-area {
-	color: #ffffff;
-	font-size: 1.3rem;
-	text-transform: uppercase;
-	letter-spacing: 0.25em;
-	font-weight: lighter;
+.hero-wrapper:has(.with-text) {
+	min-height: 100vh;
 }
 
 .hero-wrapper {
 	position: relative;
 	width: 100%;
 	max-width: 100%;
-	height: 70vh;
+	height: 80vh;
 	min-height: 400px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	overflow: hidden;
 	padding: 0 !important;
+}
+
+.hero-wrapper:has(.with-text) {
+	min-height: 140vh;
+	height: auto;
+	max-height: fit-content;
 }
 
 .hero-main-image {
@@ -36,6 +38,14 @@ div[class="hero-wrapper"] {
 	position: absolute;
 	top: 0;
 	left: 0;
+}
+
+.hero.with-text .hero-main-image{
+	height: 100vh;
+}
+
+.hero.with-text .hero-overlay{
+	display: none;
 }
 
 .hero-overlay {
@@ -83,6 +93,40 @@ div[class="hero-wrapper"] {
 	height: auto;
 	z-index: 3;
 }
+
+.hero.with-text .hero-small-image{
+	top: 94vh;
+}
+
+.hero-area {
+	color: #ffffff;
+	font-size: 1.3rem;
+	text-transform: uppercase;
+	letter-spacing: 0.25em;
+	font-weight: lighter;
+}
+
+.hero-text-row {
+	width: 100%;
+	z-index: 3;
+	position: absolute;
+	bottom: 0;
+	max-width: 1024px;
+	margin: 0 auto;
+	padding: 3em 0;
+	display: flex;
+	gap: 100px;
+	align-items: center;
+}
+
+.hero-text-left{
+	font-weight: 900;
+	font-size: 60px;
+	text-transform: uppercase;
+	line-height: 1.1;
+	margin: 0;
+}
+.hero-text-right{}
 
 @media (width <= 768px) {
 	.hero-overlay {

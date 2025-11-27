@@ -1,0 +1,146 @@
+/* Main wrapper */
+.hero-with-text-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 100% !important;
+  min-height: 100vh; /* cover viewport */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  overflow: hidden;
+  padding: 0 !important;
+  background-color: yellow; /* adjust as needed */
+}
+
+/* Metadata area label */
+.hero-area {
+  color: #ffffff;
+  font-size: 1.3rem;
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+  font-weight: lighter;
+  z-index: 2;
+  position: relative;
+}
+
+/* Main image covers viewport */
+.hero-main-image {
+  width: 96%;
+  height: 100vh; /* full viewport height */
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+/* Overlay fills viewport */
+.hero-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  z-index: 2;
+  width: 96%;
+  height: 100vh; /* full viewport height */
+  text-align: center;
+  background-color: rgb(0 0 0 /0.5);
+}
+
+.hero-overlay h1 {
+  font-weight: 900;
+  font-size: 50px;
+  color: #ffff00;
+  text-transform: uppercase;
+  max-width: 70%;
+  line-height: 0.5;
+  margin: 0;
+}
+
+.hero-overlay p {
+  font-weight: lighter;
+  font-size: 40px;
+  letter-spacing: 1.5px;
+  color: #fff;
+  text-transform: uppercase;
+  max-width: 70%;
+  line-height: 1.2;
+}
+
+/* Small image */
+.hero-small-image {
+  position: absolute;
+  bottom: 40px;
+  right: 10px;
+  width: 100px;
+  height: auto;
+  z-index: 3;
+}
+
+/* New two-column text row */
+.hero-text-row {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  padding: 40px 10%;
+  background-color: #fff; /* separate background */
+  z-index: 4;
+  width: 100%;
+}
+
+.hero-text-col {
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #333;
+}
+
+/* Responsive adjustments */
+@media (width <= 768px) {
+  .hero-overlay {
+    top: 10%;
+    left: 5%;
+    right: 5%;
+    gap: 10px;
+    text-align: center;
+  }
+
+  .hero-overlay h1 {
+    font-size: 2rem;
+  }
+
+  .hero-overlay p {
+    font-size: 0.9rem;
+    max-width: 100%;
+  }
+
+  .hero-small-image {
+    width: 70px;
+  }
+
+  .hero-text-row {
+    grid-template-columns: 1fr;
+    padding: 20px;
+  }
+}
+
+@media (width >= 1200px) {
+  .hero-overlay h1 {
+    font-size: 5rem;
+  }
+
+  .hero-overlay p {
+    font-size: 3rem;
+  }
+
+  .hero-small-image {
+    width: 52px;
+  }
+}

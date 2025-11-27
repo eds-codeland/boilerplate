@@ -3,9 +3,12 @@ import { getMetadata } from "../../scripts/aem.js";
 export default function decorate(block) {
 	const rows = [...block.querySelectorAll(":scope > div")];
 
+	// Detect variant from block class
+	const isWithText = block.classList.contains("with-text");
+
 	// Create hero-wrapper as the main parent
-	const wrapper = document.createElement("div");
-	wrapper.classList.add("hero-wrapper");
+	const wrapper = document.querySelector(".hero-wrapper");
+	// wrapper.classList.add("hero-wrapper");
 
 	// Row 1: main image + title
 	const row1 = rows[0];
@@ -15,13 +18,13 @@ export default function decorate(block) {
 	const mainImage = mainImageCell?.querySelector("img");
 	if (mainImage) {
 		mainImage.classList.add("hero-main-image");
-		wrapper.appendChild(mainImage);
+		block.appendChild(mainImage);
 	}
 
 	const overlay = document.createElement("div");
 	overlay.classList.add("hero-overlay");
 
-    // --- Read metadata ---
+	// Metadata
 	const area = getMetadata("area");
 	if (area) {
 		const areaEl = document.createElement("span");
@@ -47,14 +50,40 @@ export default function decorate(block) {
 		overlay.appendChild(desc);
 	}
 
-	wrapper.appendChild(overlay);
+	block.appendChild(overlay);
 
 	const smallImage = smallImageCell?.querySelector("img");
 	if (smallImage) {
 		smallImage.classList.add("hero-small-image");
-		wrapper.appendChild(smallImage);
+		block.appendChild(smallImage);
 	}
 
-	// Replace the block entirely with ONE wrapper
-	block.replaceWith(wrapper);
+	// Row 3: only render if variant is active
+	if (isWithText && rows[2]) {
+		const row3 = rows[2];
+		const col1 = row3?.children[0];
+		const col2 = row3?.children[1];
+
+		const textRow = document.createElement("div");
+		textRow.classList.add("hero-text-row");
+
+		if (col1) {
+			const leftText = document.createElement("div");
+			leftText.classList.add("hero-text-left");
+			leftText.innerHTML = col1.innerHTML;
+			textRow.appendChild(leftText);
+		}
+
+		if (col2) {
+			const rightText = document.createElement("div");
+			rightText.classList.add("hero-text-right");
+			rightText.innerHTML = col2.innerHTML;
+			textRow.appendChild(rightText);
+		}
+
+		wrapper.appendChild(textRow);
+		// block.classList.add("with-text");
+	}
+
+	// block.replaceWith(wrapper);
 }
