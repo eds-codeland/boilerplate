@@ -1,44 +1,60 @@
+import { getMetadata } from "../../scripts/aem.js";
+
 export default function decorate(block) {
-  const rows = [...block.querySelectorAll(':scope > div')];
+	const rows = [...block.querySelectorAll(":scope > div")];
 
-  block.innerHTML = '';
+	// Create hero-wrapper as the main parent
+	const wrapper = document.createElement("div");
+	wrapper.classList.add("hero-wrapper");
 
-  const row1 = rows[0];
-  const mainImageCell = row1?.children[0];
-  const titleCell = row1?.children[1];
+	// Row 1: main image + title
+	const row1 = rows[0];
+	const mainImageCell = row1?.children[0];
+	const titleCell = row1?.children[1];
 
-  const mainImage = mainImageCell?.querySelector('img');
-  if (mainImage) {
-    mainImage.classList.add('hero-main-image');
-    block.appendChild(mainImage);
-  }
+	const mainImage = mainImageCell?.querySelector("img");
+	if (mainImage) {
+		mainImage.classList.add("hero-main-image");
+		wrapper.appendChild(mainImage);
+	}
 
-  const overlay = document.createElement('div');
-  overlay.classList.add('hero-overlay');
+	const overlay = document.createElement("div");
+	overlay.classList.add("hero-overlay");
 
-  if (titleCell) {
-    const title = document.createElement('h1');
-    title.textContent = titleCell.textContent;
-    overlay.appendChild(title);
-  }
+    // --- Read metadata ---
+	const area = getMetadata("area");
+	if (area) {
+		const areaEl = document.createElement("span");
+		areaEl.classList.add("hero-area");
+		areaEl.textContent = area;
+		overlay.appendChild(areaEl);
+	}
 
-  const row2 = rows[1];
-  const smallImageCell = row2?.children[0];
-  const descCell = row2?.children[1];
+	if (titleCell) {
+		const title = document.createElement("h1");
+		title.textContent = titleCell.textContent;
+		overlay.appendChild(title);
+	}
 
-  if (descCell) {
-    const desc = document.createElement('p');
-    desc.textContent = descCell.textContent;
-    overlay.appendChild(desc);
-  }
+	// Row 2: small image + description
+	const row2 = rows[1];
+	const smallImageCell = row2?.children[0];
+	const descCell = row2?.children[1];
 
-  block.appendChild(overlay);
+	if (descCell) {
+		const desc = document.createElement("p");
+		desc.textContent = descCell.textContent;
+		overlay.appendChild(desc);
+	}
 
-  const smallImage = smallImageCell?.querySelector('img');
-  if (smallImage) {
-    smallImage.classList.add('hero-small-image');
-    block.appendChild(smallImage);
-  }
+	wrapper.appendChild(overlay);
 
-  block.classList.add('hero-wrapper');
+	const smallImage = smallImageCell?.querySelector("img");
+	if (smallImage) {
+		smallImage.classList.add("hero-small-image");
+		wrapper.appendChild(smallImage);
+	}
+
+	// Replace the block entirely with ONE wrapper
+	block.replaceWith(wrapper);
 }
