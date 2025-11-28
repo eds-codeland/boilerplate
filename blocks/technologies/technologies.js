@@ -4,35 +4,35 @@ export default function decorate(block) {
   const rows = [...block.querySelectorAll(':scope > div')];
   
   const leftColumnRow = rows[0];
-  const leftColumns = leftColumnRow ? [...leftColumnRow.children] : [];
+  const leftCell = leftColumnRow?.children[0];
   
-  const eyebrow = leftColumns[0]?.textContent?.trim() || '';
-  const heading = leftColumns[1]?.textContent?.trim() || '';
-  const description = leftColumns[2]?.textContent?.trim() || '';
+  const eyebrowEl = leftCell?.querySelector('h4');
+  const headingEl = leftCell?.querySelector('h2');
+  const descriptionEls = leftCell?.querySelectorAll('p') || [];
+  
+  const eyebrow = eyebrowEl?.textContent?.trim() || '';
+  const heading = headingEl?.textContent?.trim() || '';
+  const descriptionHTML = [...descriptionEls].map(p => p.outerHTML).join('');
 
   const cardRows = rows.slice(1);
   const cards = [];
 
   cardRows.forEach((row) => {
     const columns = [...row.children];
-    if (columns.length >= 5) {
+    if (columns.length >= 2) {
       const imageCell = columns[0];
-      const titleLine1 = columns[1]?.textContent?.trim() || '';
-      const titleLine2 = columns[2]?.textContent?.trim() || '';
-      const cardDescription = columns[3]?.textContent?.trim() || '';
-      const linkCell = columns[4];
-      
+      const textCell = columns[1];
       const img = imageCell?.querySelector('img');
       const imageSrc = img?.src || '';
+      const titleLine1El = textCell?.querySelector('h3');
+      const titleLine2El = textCell?.querySelector('h4');
+      const descEls = textCell?.querySelectorAll('p') || [];
+      const linkElement = textCell?.querySelector('a');
+      const titleLine1 = titleLine1El?.textContent?.trim() || '';
+      const titleLine2 = titleLine2El?.textContent?.trim() || '';
+      const cardDescription = [...descEls].map(p => p.textContent?.trim()).join(' ') || '';
+      const linkUrl = linkElement?.href || '';
       const imageAlt = img?.alt || `${titleLine1} ${titleLine2}`;
-      
-      let linkUrl = '';
-      const linkElement = linkCell?.querySelector('a');
-      if (linkElement) {
-        linkUrl = linkElement.href;
-      } else if (linkCell?.textContent?.trim()) {
-        linkUrl = linkCell.textContent.trim();
-      }
 
       if (imageSrc || titleLine1) {
         cards.push({
@@ -56,25 +56,24 @@ export default function decorate(block) {
   leftColumn.className = 'technologies-left';
 
   if (eyebrow) {
-    const eyebrowEl = document.createElement('div');
-    eyebrowEl.className = 'technologies-eyebrow';
-    eyebrowEl.textContent = eyebrow;
-    leftColumn.appendChild(eyebrowEl);
+    const eyebrowDiv = document.createElement('div');
+    eyebrowDiv.className = 'technologies-eyebrow';
+    eyebrowDiv.textContent = eyebrow;
+    leftColumn.appendChild(eyebrowDiv);
   }
 
   if (heading) {
-    const headingEl = document.createElement('h2');
-    headingEl.className = 'technologies-heading';
-    headingEl.textContent = heading;
-    leftColumn.appendChild(headingEl);
+    const headingDiv = document.createElement('h2');
+    headingDiv.className = 'technologies-heading';
+    headingDiv.textContent = heading;
+    leftColumn.appendChild(headingDiv);
   }
 
-  if (description) {
-    const descEl = document.createElement('div');
-    descEl.className = 'technologies-description';
-    const descContent = leftColumns[2]?.innerHTML || description;
-    descEl.innerHTML = descContent;
-    leftColumn.appendChild(descEl);
+  if (descriptionHTML) {
+    const descDiv = document.createElement('div');
+    descDiv.className = 'technologies-description';
+    descDiv.innerHTML = descriptionHTML;
+    leftColumn.appendChild(descDiv);
   }
 
   const rightColumn = document.createElement('div');
@@ -114,17 +113,17 @@ export default function decorate(block) {
     titleWrapper.className = 'technologies-card-title';
     
     if (card.titleLine1) {
-      const titleLine1El = document.createElement('span');
-      titleLine1El.className = 'technologies-card-title-line1';
-      titleLine1El.textContent = card.titleLine1;
-      titleWrapper.appendChild(titleLine1El);
+      const titleLine1Span = document.createElement('span');
+      titleLine1Span.className = 'technologies-card-title-line1';
+      titleLine1Span.textContent = card.titleLine1;
+      titleWrapper.appendChild(titleLine1Span);
     }
 
     if (card.titleLine2) {
-      const titleLine2El = document.createElement('span');
-      titleLine2El.className = 'technologies-card-title-line2';
-      titleLine2El.textContent = card.titleLine2;
-      titleWrapper.appendChild(titleLine2El);
+      const titleLine2Span = document.createElement('span');
+      titleLine2Span.className = 'technologies-card-title-line2';
+      titleLine2Span.textContent = card.titleLine2;
+      titleWrapper.appendChild(titleLine2Span);
     }
 
     content.appendChild(titleWrapper);
@@ -154,4 +153,3 @@ export default function decorate(block) {
 
   block.classList.add('technologies-block');
 }
-
