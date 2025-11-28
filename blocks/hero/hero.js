@@ -5,6 +5,7 @@ export default function decorate(block) {
 
 	// Detect variant from block class
 	const isWithText = block.classList.contains("with-text");
+	block.innerHTML = "";
 
 	// Create hero-wrapper as the main parent
 	const wrapper = document.querySelector(".hero-wrapper");
