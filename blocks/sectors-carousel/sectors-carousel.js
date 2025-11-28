@@ -68,13 +68,6 @@ function setupAutoAdvance(block) {
     start();
   }
 
-  // Only pause when hovering over the slides area, not the nav
-  const slidesContainer = block.querySelector('.sectors-slides');
-  if (slidesContainer) {
-    slidesContainer.addEventListener('mouseenter', stop);
-    slidesContainer.addEventListener('mouseleave', start);
-  }
-
   // Store reset function on block for nav clicks
   block.resetAutoAdvance = reset;
 
