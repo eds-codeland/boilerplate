@@ -3,13 +3,11 @@ import { getMetadata } from "../../scripts/aem.js";
 export default function decorate(block) {
 	const rows = [...block.querySelectorAll(":scope > div")];
 
-	// Detect variant from block class
-	const isWithText = block.classList.contains("with-text");
+	// const isWithText = block.classList.contains("with-text");
 	block.innerHTML = "";
 
 	// Create hero-wrapper as the main parent
 	const wrapper = document.querySelector(".hero-wrapper");
-	// wrapper.classList.add("hero-wrapper");
 
 	// Row 1: main image + title
 	const row1 = rows[0];
@@ -59,8 +57,8 @@ export default function decorate(block) {
 		block.appendChild(smallImage);
 	}
 
-	// Row 3: only render if variant is active
-	if (isWithText && rows[2]) {
+	if (rows[2]) {
+		block.classList.add("with-text")
 		const row3 = rows[2];
 		const col1 = row3?.children[0];
 		const col2 = row3?.children[1];
@@ -83,8 +81,6 @@ export default function decorate(block) {
 		}
 
 		wrapper.appendChild(textRow);
-		// block.classList.add("with-text");
 	}
 
-	// block.replaceWith(wrapper);
 }
