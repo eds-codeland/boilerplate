@@ -168,6 +168,10 @@
     flex: 1;
     align-items: flex-start;
   }
+
+    .columns.one-two > div {
+        align-items: flex-start;
+    }
 }
 
 .columns.features {
