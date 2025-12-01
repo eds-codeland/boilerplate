@@ -49,6 +49,11 @@
   /* sectors carousel */
   --sectors-yellow: #FFFF00;
   --sectors-nav-width: 400px;
+
+    /* block padding */
+    --block-padding-s: 1em;
+    --block-padding-m: 4em;
+    --block-padding-l: 7em;
 }
 
 /* fallback fonts */
@@ -285,4 +290,28 @@ main .section {
         width: 70%;
         font-size: 16px;
     }
+}
+
+.top-s {
+    padding-top: var(--block-padding-s);
+}
+
+.top-m {
+    padding-top: var(--block-padding-m);
+}
+
+.top-l {
+    padding-top: var(--block-padding-l);
+}
+
+.bottom-s {
+    padding-bottom: var(--block-padding-s);
+}
+
+.bottom-m {
+    padding-bottom: var(--block-padding-m);
+}
+
+.bottom-l {
+    padding-bottom: var(--block-padding-l);
 }
