@@ -14,6 +14,7 @@ export default async function decorate(block) {
   const bottomRow = document.createElement('div');
   bottomRow.className = 'nav-bottom';
 
+  let toolsDiv = null;
   const sections = fragment.querySelectorAll(':scope .section');
 
   sections.forEach((section, i) => {
@@ -50,55 +51,44 @@ export default async function decorate(block) {
 
       const wrapper = section.querySelector('.default-content-wrapper');
       if (wrapper) {
-        const paragraphs = wrapper.querySelectorAll('p');
+        const langList = wrapper.querySelector('ul');
+        const btnParagraph = wrapper.querySelector('p');
 
-        if (paragraphs[0]) {
+        if (langList) {
           const langDiv = document.createElement('div');
           langDiv.className = 'nav-lang';
-          const langHtml = paragraphs[0].innerHTML;
-          const langs = langHtml.split(/<br\s*\/?>/i).map((l) => l.trim()).filter(Boolean);
-          const firstLang = langs[0] || 'ITA';
+          const firstLangItem = langList.querySelector('li');
+          const firstLang = firstLangItem ? firstLangItem.textContent.trim() : 'ITA';
           langDiv.innerHTML = `<span>${firstLang}</span><span class="nav-lang-arrow">∨</span>`;
           div.appendChild(langDiv);
         }
 
-        if (paragraphs[1]) {
+        if (btnParagraph) {
           const btnDiv = document.createElement('div');
           btnDiv.className = 'nav-buttons';
-          const html = paragraphs[1].innerHTML;
-          const items = html.split(/<br\s*\/?>/i)
-            .map((item) => item.trim())
-            .filter((item) => item && item !== '—' && item !== '-');
+          const links = btnParagraph.querySelectorAll('a');
 
-          items.forEach((item) => {
+          links.forEach((link) => {
             const btn = document.createElement('a');
             btn.className = 'nav-btn';
-            if (item.startsWith('<a')) {
-              const temp = document.createElement('div');
-              temp.innerHTML = item;
-              const link = temp.querySelector('a');
-              if (link) {
-                btn.href = link.href;
-                btn.textContent = link.textContent;
-              }
-            } else {
-              const slug = item.toLowerCase().replace(/\s+/g, '-');
-              btn.href = `/${slug}`;
-              btn.textContent = item;
-            }
+            btn.href = link.href;
+            btn.textContent = link.textContent;
             btnDiv.appendChild(btn);
           });
-          div.appendChild(btnDiv);
+
+          if (links.length > 0) {
+            div.appendChild(btnDiv);
+          }
         }
       }
-      topRow.appendChild(div);
+      toolsDiv = div;
     }
   });
 
   const hamburger = document.createElement('div');
   hamburger.className = 'nav-hamburger';
   hamburger.innerHTML = `<button type="button" aria-controls="nav" aria-label="Menu">
-    <span class="nav-hamburger-icon"></span>
+    <span class="nav-hamburger-icon"><span></span></span>
   </button>`;
 
   hamburger.addEventListener('click', () => {
@@ -106,8 +96,11 @@ export default async function decorate(block) {
     nav.setAttribute('aria-expanded', String(!expanded));
   });
 
+  topRow.appendChild(toolsDiv);
   nav.appendChild(topRow);
   nav.appendChild(bottomRow);
+  nav.appendChild(toolsDiv.cloneNode(true));
+  nav.lastChild.className = 'nav-tools-mobile';
   nav.prepend(hamburger);
 
   block.textContent = '';
