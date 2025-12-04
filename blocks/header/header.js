@@ -1,8 +1,103 @@
 import { loadFragment } from '../fragment/fragment.js';
 
+/**
+ * Fetches the query-index.json and returns all page entries
+ * @returns {Promise<Array>} Array of page objects from query-index
+ */
+async function fetchQueryIndex() {
+  try {
+    const response = await fetch('https://main--boilerplate--eds-codeland.aem.page/query-index.json');
+    const json = await response.json();
+    return json.data || [];
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('Failed to fetch query-index:', error);
+    return [];
+  }
+}
+
+/**
+ * Filters pages by category from the query-index
+ * @param {Array} pages - All pages from query-index
+ * @param {string} category - Category name to filter by
+ * @returns {Array} Filtered pages matching the category
+ */
+function getPagesByCategory(pages, category) {
+  return pages.filter((page) => page.category
+    && page.category.toLowerCase() === category.toLowerCase());
+}
+
+/**
+ * Extracts a clean title from the full page title
+ * e.g., "Settori | Agricoltura" -> "Agricoltura"
+ * @param {string} fullTitle - The full title from query-index
+ * @returns {string} The cleaned title
+ */
+function getCleanTitle(fullTitle) {
+  if (fullTitle.includes('|')) {
+    return fullTitle.split('|').pop().trim();
+  }
+  return fullTitle;
+}
+
+/**
+ * Replaces placeholder links with dynamic content from query-index
+ * @param {HTMLElement} navElement - The navigation element to process
+ * @param {Array} allPages - All pages from query-index
+ */
+async function replacePlaceholders(navElement, allPages) {
+  const allLinks = navElement.querySelectorAll('a');
+
+  allLinks.forEach((link) => {
+    const isPlaceholder = link.href.includes('placeholder')
+      || link.textContent.toLowerCase().trim() === 'placeholder';
+
+    if (isPlaceholder) {
+      const parentLi = link.closest('li');
+      if (!parentLi) return;
+
+      const parentUl = parentLi.closest('ul');
+      const grandparentLi = parentUl?.closest('li');
+
+      if (grandparentLi) {
+        const categoryLink = grandparentLi.querySelector(':scope > a');
+        const categoryText = grandparentLi.childNodes[0];
+        const category = categoryLink?.textContent?.trim()
+          || categoryText?.textContent?.trim()
+          || '';
+
+        if (category) {
+          const categoryPages = getPagesByCategory(allPages, category);
+
+          if (categoryPages.length > 0) {
+            categoryPages.forEach((page, index) => {
+              const newLi = document.createElement('li');
+              const newLink = document.createElement('a');
+              newLink.href = page.path;
+              newLink.textContent = getCleanTitle(page.title);
+              newLi.appendChild(newLink);
+
+              if (index === 0) {
+                parentLi.replaceWith(newLi);
+              } else {
+                parentUl.appendChild(newLi);
+              }
+            });
+          } else {
+            parentLi.remove();
+          }
+        }
+      }
+    }
+  });
+}
+
 export default async function decorate(block) {
   const fragment = await loadFragment('/nav');
   if (!fragment) return;
+
+  const allPages = await fetchQueryIndex();
+  await replacePlaceholders(fragment, allPages);
 
   const nav = document.createElement('nav');
   nav.id = 'nav';
