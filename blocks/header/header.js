@@ -53,17 +53,15 @@ function getCleanTitle(fullTitle) {
  * @param {Array} allPages - All pages from query-index
  */
 function replacePlaceholders(navElement, allPages) {
-  const allLinks = navElement.querySelectorAll('a');
+  // Find all list items (placeholder can be plain text, not a link)
+  const allListItems = navElement.querySelectorAll('li');
 
-  allLinks.forEach((link) => {
-    const isPlaceholder = link.href.includes('placeholder')
-      || link.textContent.toLowerCase().trim() === 'placeholder';
+  allListItems.forEach((li) => {
+    const text = li.textContent.toLowerCase().trim();
+    const isPlaceholder = text === 'placeholder';
 
     if (isPlaceholder) {
-      const parentLi = link.closest('li');
-      if (!parentLi) return;
-
-      const parentUl = parentLi.closest('ul');
+      const parentUl = li.closest('ul');
       if (!parentUl) return;
 
       const groupedPages = groupPagesByCategory(allPages);
@@ -93,13 +91,13 @@ function replacePlaceholders(navElement, allPages) {
       if (categoryItems.length > 0) {
         categoryItems.forEach((item, index) => {
           if (index === 0) {
-            parentLi.replaceWith(item);
+            li.replaceWith(item);
           } else {
             parentUl.insertBefore(item, parentUl.children[index]);
           }
         });
       } else {
-        parentLi.remove();
+        li.remove();
       }
     }
   });
