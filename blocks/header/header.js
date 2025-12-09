@@ -17,14 +17,21 @@ async function fetchQueryIndex() {
 }
 
 /**
- * Filters pages by category from the query-index
+ * Groups pages by their category
  * @param {Array} pages - All pages from query-index
- * @param {string} category - Category name to filter by
- * @returns {Array} Filtered pages matching the category
+ * @returns {Object} Pages grouped by category name
  */
-function getPagesByCategory(pages, category) {
-  return pages.filter((page) => page.category
-    && page.category.toLowerCase() === category.toLowerCase());
+function groupPagesByCategory(pages) {
+  const grouped = {};
+  pages.forEach((page) => {
+    if (page.category) {
+      if (!grouped[page.category]) {
+        grouped[page.category] = [];
+      }
+      grouped[page.category].push(page);
+    }
+  });
+  return grouped;
 }
 
 /**
@@ -41,11 +48,11 @@ function getCleanTitle(fullTitle) {
 }
 
 /**
- * Replaces placeholder links with dynamic content from query-index
+ * Replaces a root-level placeholder with full categorized menu from query-index
  * @param {HTMLElement} navElement - The navigation element to process
  * @param {Array} allPages - All pages from query-index
  */
-async function replacePlaceholders(navElement, allPages) {
+function replacePlaceholders(navElement, allPages) {
   const allLinks = navElement.querySelectorAll('a');
 
   allLinks.forEach((link) => {
@@ -57,36 +64,42 @@ async function replacePlaceholders(navElement, allPages) {
       if (!parentLi) return;
 
       const parentUl = parentLi.closest('ul');
-      const grandparentLi = parentUl?.closest('li');
+      if (!parentUl) return;
 
-      if (grandparentLi) {
-        const categoryLink = grandparentLi.querySelector(':scope > a');
-        const categoryText = grandparentLi.childNodes[0];
-        const category = categoryLink?.textContent?.trim()
-          || categoryText?.textContent?.trim()
-          || '';
+      const groupedPages = groupPagesByCategory(allPages);
 
-        if (category) {
-          const categoryPages = getPagesByCategory(allPages, category);
+      const categoryItems = [];
+      Object.keys(groupedPages).forEach((category) => {
+        const categoryLi = document.createElement('li');
 
-          if (categoryPages.length > 0) {
-            categoryPages.forEach((page, index) => {
-              const newLi = document.createElement('li');
-              const newLink = document.createElement('a');
-              newLink.href = page.path;
-              newLink.textContent = getCleanTitle(page.title);
-              newLi.appendChild(newLink);
+        const categoryLabel = document.createElement('span');
+        categoryLabel.textContent = category;
+        categoryLi.appendChild(categoryLabel);
 
-              if (index === 0) {
-                parentLi.replaceWith(newLi);
-              } else {
-                parentUl.appendChild(newLi);
-              }
-            });
+        const subUl = document.createElement('ul');
+        groupedPages[category].forEach((page) => {
+          const pageLi = document.createElement('li');
+          const pageLink = document.createElement('a');
+          pageLink.href = page.path;
+          pageLink.textContent = getCleanTitle(page.title);
+          pageLi.appendChild(pageLink);
+          subUl.appendChild(pageLi);
+        });
+
+        categoryLi.appendChild(subUl);
+        categoryItems.push(categoryLi);
+      });
+
+      if (categoryItems.length > 0) {
+        categoryItems.forEach((item, index) => {
+          if (index === 0) {
+            parentLi.replaceWith(item);
           } else {
-            parentLi.remove();
+            parentUl.insertBefore(item, parentUl.children[index]);
           }
-        }
+        });
+      } else {
+        parentLi.remove();
       }
     }
   });
@@ -97,7 +110,7 @@ export default async function decorate(block) {
   if (!fragment) return;
 
   const allPages = await fetchQueryIndex();
-  await replacePlaceholders(fragment, allPages);
+  replacePlaceholders(fragment, allPages);
 
   const nav = document.createElement('nav');
   nav.id = 'nav';
